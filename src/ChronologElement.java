@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -16,6 +15,7 @@ public class ChronologElement {
     private String name;
     private ChronologElement parent;
     private List<ChronologElement> children;
+    private Time time;
 
     /**
      * Creates a <code>ChronologElement</code>.
@@ -34,22 +34,7 @@ public class ChronologElement {
         this.name = name;
         this.parent = parent;
         this.children = new ArrayList<ChronologElement>();
-    }
-
-    /**
-     * Gets the name of the element.
-     * @return the name
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Gets the parent of the element.
-     * @return the parent
-     */
-    public ChronologElement getParent() {
-        return getParent(false);
+        this.time = new Time();
     }
 
     /**
@@ -82,10 +67,19 @@ public class ChronologElement {
         return children.add(child);
     }
 
+    /**
+     * Sets the time of the element.
+     * @param time the time in millis
+     */
+    public void setTime(long time) {
+        this.time.setTime(time);
+    }
+
     private String toString(String prefix) {
         StringBuilder builder = new StringBuilder();
         builder.append(prefix);
         builder.append(name);
+        builder.append(time);
         builder.append("\n");
         prefix = prefix.substring(0, prefix.length() - 3) + PREFIX_SUBSUB;
         for (Iterator<ChronologElement> it = children.iterator(); it.hasNext(); ) {
@@ -101,7 +95,9 @@ public class ChronologElement {
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder(name);
+        StringBuilder builder = new StringBuilder();
+        builder.append(name);
+        builder.append(time);
         builder.append("\n");
         for (Iterator<ChronologElement> it = children.iterator(); it.hasNext(); ) {
             ChronologElement child = it.next();
@@ -114,7 +110,41 @@ public class ChronologElement {
      * Creates an anonymous element.
      * @return an anonymous element
      */
-    public static final ChronologElement createAnonymousElement() {
+    public static ChronologElement createAnonymousElement() {
         return new ChronologElement(ANONYMOUS_NAME);
+    }
+
+
+    /**
+     * This class represents the time in millis of the element.
+     */
+    private final class Time {
+        private static final String TIME_PREFIX = "  [";
+        private static final String TIME_SUFFIX = "]";
+
+        private Long time;
+
+        /**
+         * Sets the time of the element.
+         * @param time the time in millis
+         */
+        public void setTime(long time) {
+            this.time = time;
+        }
+
+        /**
+         * Prints the time.
+         * @return the <code>String</code> representing the time
+         */
+        @Override
+        public String toString() {
+            StringBuilder builder = new StringBuilder();
+            if (time != null) {
+                builder.append(TIME_PREFIX);
+                builder.append(time);
+                builder.append(TIME_SUFFIX);
+            }
+            return builder.toString();
+        }
     }
 }

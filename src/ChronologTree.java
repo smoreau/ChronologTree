@@ -7,6 +7,7 @@ import java.io.*;
 public class ChronologTree {
     private static final String IO_IN = "IN";
     private static final String IO_OUT = "OUT";
+    private static final String TIME_EMPTY = "";
 
     private String correlationId;
     private ChronologElement current;
@@ -22,17 +23,25 @@ public class ChronologTree {
 
     private void scanLine(String line) {
         String[] elements = line.split("\\|");
-        String inOut = elements[11];
-        String name = elements[13];
+        String cookieCorrelationId = elements[7];
 
-        if (IO_IN.equals(inOut)) {
-            ChronologElement newElement = new ChronologElement(name, current);
-            current.addChild(newElement);
-            current = newElement;
-        } else if (IO_OUT.equals(elements[11])) {
-            current = current.getParent(true);
-        } else {
-            throw new RuntimeException("This column should contains IN or OUT!");
+        if (cookieCorrelationId.equals(this.correlationId)) {
+            String inOut = elements[11];
+            String name = elements[13];
+            String time = elements.length > 14 ? elements[14] : TIME_EMPTY;
+
+            if (IO_IN.equals(inOut)) {
+                ChronologElement newElement = new ChronologElement(name, current);
+                current.addChild(newElement);
+                current = newElement;
+            } else if (IO_OUT.equals(inOut)) {
+                if (!TIME_EMPTY.equals(time)) {
+                    current.setTime(new Long(time));
+                }
+                current = current.getParent(true);
+            } else {
+                throw new RuntimeException("This column should contains IN or OUT!");
+            }
         }
     }
 
@@ -41,7 +50,7 @@ public class ChronologTree {
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
         String strLine;
         while ((strLine = br.readLine()) != null)   {
-            if (strLine.indexOf(this.correlationId) != -1) {
+            if (strLine.contains(this.correlationId)) {
                 scanLine(strLine);
             }
         }
