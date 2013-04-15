@@ -2,7 +2,7 @@ import java.io.*;
 
 /**
  * This class represents the chronolog tree.
- * User: Stephane Moreau <smoreau@logikdev.com>
+ * @author Stephane Moreau <smoreau@logikdev.com>
  */
 public class ChronologTree {
     private static final String IO_IN = "IN";
@@ -27,6 +27,7 @@ public class ChronologTree {
 
         if (cookieCorrelationId.equals(this.correlationId)) {
             String inOut = elements[11];
+            String status = elements[12];
             String name = elements[13];
             String time = elements.length > 14 ? elements[14] : TIME_EMPTY;
 
@@ -38,6 +39,7 @@ public class ChronologTree {
                 if (!TIME_EMPTY.equals(time)) {
                     current.setTime(new Long(time));
                 }
+                current.setStatus(status);
                 current = current.getParent(true);
             } else {
                 throw new RuntimeException("This column should contains IN or OUT!");

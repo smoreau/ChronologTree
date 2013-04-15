@@ -3,7 +3,7 @@ import java.util.*;
 
 /**
  * This class manages the list of files to read.
- * User: Stephane Moreau <smoreau@logikdev.com>
+ * @author Stephane Moreau <smoreau@logikdev.com>
  */
 public class ChronologFiles {
     private static final String PREFIX = "chronolog";

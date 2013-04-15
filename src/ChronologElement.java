@@ -4,18 +4,20 @@ import java.util.List;
 
 /**
  * This class represents an element of the chronolog tree.
- * User: Stephane Moreau <smoreau@logikdev.com>
+ * @author Stephane Moreau <smoreau@logikdev.com>
  */
 public class ChronologElement {
     private static final String ANONYMOUS_NAME = "?UNKNOWN?";
     private static final String PREFIX_SUB    = "+- ";
     private static final String PREFIX_LAST   = "\\- ";
     private static final String PREFIX_SUBSUB = "|  ";
+    private static final String STATUS_OK = "OK";
 
     private String name;
     private ChronologElement parent;
     private List<ChronologElement> children;
     private Time time;
+    private String status;
 
     /**
      * Creates a <code>ChronologElement</code>.
@@ -75,11 +77,29 @@ public class ChronologElement {
         this.time.setTime(time);
     }
 
+    /**
+     * Sets the status of the element.
+     * @param status the status of the element
+     */
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    /**
+     * Returns <code>true</code> if the status of the element is OK and <code>false</code> otherwise.
+     * @return <code>true</code> if the status of the element is OK; <code>false</code> otherwise
+     */
+    public boolean isStatusOk() {
+        return STATUS_OK.equals(this.status);
+    }
+
     private String toString(String prefix) {
         StringBuilder builder = new StringBuilder();
         builder.append(prefix);
         builder.append(name);
+        builder.append(isStatusOk() ? ConsoleColor.ANSI_GREEN : ConsoleColor.ANSI_RED);
         builder.append(time);
+        builder.append(ConsoleColor.ANSI_RESET);
         builder.append("\n");
         prefix = prefix.substring(0, prefix.length() - 3) + PREFIX_SUBSUB;
         for (Iterator<ChronologElement> it = children.iterator(); it.hasNext(); ) {
@@ -97,7 +117,9 @@ public class ChronologElement {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append(name);
+        builder.append(isStatusOk() ? ConsoleColor.ANSI_GREEN : ConsoleColor.ANSI_RED);
         builder.append(time);
+        builder.append(ConsoleColor.ANSI_RESET);
         builder.append("\n");
         for (Iterator<ChronologElement> it = children.iterator(); it.hasNext(); ) {
             ChronologElement child = it.next();
